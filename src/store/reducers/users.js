@@ -20,11 +20,12 @@ const initialState = {
 export default function(state = initialState, action) {
   switch (action.type) {
     case SET_CURRENT_USER: {
-      const { user, token } = action.payload;
+      const { user } = action.payload;
+      const token = user.token;
       saveToken(token);
       return {
         ...state,
-        user,
+        current_user: user,
         token: token
       };
     }
@@ -61,6 +62,7 @@ export default function(state = initialState, action) {
 
     case FETCH_USERS_SUCCESS: {
       const { users } = action.payload
+      console.log("USERS", users)
       return {
         ...state,
         users: users,

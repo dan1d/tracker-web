@@ -4,7 +4,7 @@ import { Navbar } from 'react-bootstrap';
 
 
 function TopBar() {
-  const { user } = useSelector(state => state.users);
+  const { current_user } = useSelector(state => state.users);
 
   return (
     <Navbar>
@@ -12,7 +12,7 @@ function TopBar() {
       <Navbar.Toggle />
       <Navbar.Collapse className="justify-content-end">
         <Navbar.Text>
-          Signed in as: <a href="#login">{user.email}</a>
+          Signed in as {current_user.role.kind}: <a href="#login">{current_user.email}</a>
         </Navbar.Text>
       </Navbar.Collapse>
     </Navbar>

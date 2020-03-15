@@ -15,8 +15,10 @@ import ajax from '../utils/http-common';
 import { useDispatch, useSelector } from "react-redux";
 import { SET_CURRENT_USER } from "../store/actionTypes";
 import Dashboard from "../pages/dashboard";
+import TimeSheets from "../pages/TimeSheets";
 
 export default function Routes() {
+  const current_user = useSelector(state => state.users.current_user);
 
   return (
     <Router>
@@ -26,8 +28,11 @@ export default function Routes() {
             <LoginPage />
           </Route>
           <PrivateRoute path="/dashboard">
-            <TopBar />
             <Dashboard />
+          </PrivateRoute>
+
+          <PrivateRoute path="/timesheets" >
+            <TimeSheets />
           </PrivateRoute>
         </Switch>
       </Container>
@@ -36,37 +41,47 @@ export default function Routes() {
 }
 
 function PrivateRoute({ children, ...rest }) {
-  const user = useSelector(state => state.users.user);
+  const current_user = useSelector(state => state.users.current_user);
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   const redirectTo = location => <Redirect to={{ pathname: "/login", state: { from: location } }} />
+  const history = useHistory();
   const route = <Route
       {...rest}
       render={({ location }) =>
-        user ? (
-          children
+        current_user.email ? (
+          <React.Fragment>
+            <TopBar />
+            {children}
+          </React.Fragment>
+
         ) : (redirectTo(location))
       }
     />
 
     useEffect(() => {
-      ajax.get('/users/self').then(
-        (response) => {
-          dispatch({type: SET_CURRENT_USER, payload: response.data});
-          setLoading(false)
-        }
-      ).catch(err => {
-        setLoading(false)
-      })
-    }, [setLoading, dispatch])
+      if(!current_user.email) {
+        ajax.get('/users/self').then(
+          (response) => {
+            dispatch({type: SET_CURRENT_USER, payload: response.data});
+            setLoading(false)
+          }
+        ).catch(err => {
+          history.push('/login');
+        });
+      }
+    }, [current_user, history, dispatch])
 
-    if(user) {
+    if(current_user.email) {
       return route
     }
 
-    if(loading) {
+    console.log(current_user.email, 'current_user.email')
+    if(loading || !current_user.email) {
+      console.log('perdiste')
       return <Spinner />
     } else {
+      console.log('hahahax')
       return route;
     }
 }

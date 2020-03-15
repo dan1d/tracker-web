@@ -4,9 +4,9 @@ import AdminDashboard from "../../components/AdminDashboard";
 import UserDashboard from "../../components/UserDashboard";
 
 function Dashboard() {
-  const user = useSelector(state => state.users.user);
+  const { current_user } = useSelector(state => state.users);
 
-  return user.role.kind === 'admin' ? <AdminDashboard /> : <UserDashboard />
+  return current_user.role.kind === 'admin' ? <AdminDashboard /> : <UserDashboard />
 }
 
 export default Dashboard

@@ -28,8 +28,8 @@ function LoginPage() {
 
     axios.post('/authenticate', data).then(
       (response) => {
-        dispatch({type: LOGIN_STARTED_SUCCESS});
         dispatch({type: SET_CURRENT_USER, payload: response.data});
+        dispatch({type: LOGIN_STARTED_SUCCESS});
         history.push('/dashboard');
       }
     ).catch((err) => {
